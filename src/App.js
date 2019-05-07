@@ -1,7 +1,7 @@
 'use strict'
 
 const SlackBot = require('./SlackBot')
-const GitHubApiClient = require("./GitHubApiClient")
+const GitHubApiClient = require('./GitHubApiClient')
 const PullRequests = require('./PullRequests')
 const Parser = require('./Parser')
 const _ = require('lodash')
@@ -12,25 +12,41 @@ class App {
 
     const controller = new SlackBot().getController()
 
-    controller.hears("ls (.+)", ["direct_message", "direct_mention", "mention"], this.ls)
+    controller.hears(
+      'ls (.+)',
+      ['direct_message', 'direct_mention', 'mention'],
+      this.ls
+    )
   }
 
   static ls(bot, message) {
     const conditions = new Parser(message.match[1]).parse()
 
+    const filters = Object.values(conditions)
+      .map(filter => filter.toQuery())
+      .filter(filter => !!filter)
+      .map(filter => filter.replace(/ /g, '+'))
+      .join('+')
+
     const client = new GitHubApiClient()
 
-    client.getAllPullRequests(conditions).then((prs) => {
+    client.getAllPullRequests(conditions).then(prs => {
       bot.startConversation(message, (err, convo) => {
-        convo.say(':memo: Review waiting list!')
-
-        const messages = new PullRequests(prs, conditions).convertToSlackMessages()
+        const messages = new PullRequests(
+          prs,
+          conditions
+        ).convertToSlackMessages()
 
         if (messages.length > 0) {
-          _.each(messages, (pr) => convo.say(pr))
-          convo.say("That's all. Please review!")
+          convo.say(`:memo: ${messages.length} unshipped Pull Requests:`)
+          _.each(messages, pr => convo.say(pr))
+
+          convo.say(
+            'View the list: https://github.com/pulls?utf8=✓&q=is:pr+is:open+' +
+              filters
+          )
         } else {
-          convo.say('No pull requests for now.')
+          convo.say(`:memo: Nothing to ship! 🍾`)
         }
 
         convo.next()
@@ -49,8 +65,10 @@ class App {
     }
 
     if (errors.length > 0) {
-      errors.forEach((error) => console.error(error))
-      console.error('Cannot continue to start the bot due to critical lack of parameters.')
+      errors.forEach(error => console.error(error))
+      console.error(
+        'Cannot continue to start the bot due to critical lack of parameters.'
+      )
       process.exit(1)
     }
   }
