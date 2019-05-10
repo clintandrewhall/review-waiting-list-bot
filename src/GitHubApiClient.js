@@ -86,6 +86,13 @@ class GitHubApiClient {
                   }
                 }
               },
+              reviews(first: 100) {
+                edges {
+                  node {
+                    state
+                  }
+                }
+              },
               assignees(first: 100) {
                 nodes {
                   login

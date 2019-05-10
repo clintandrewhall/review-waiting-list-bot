@@ -1,7 +1,7 @@
 'use strict'
 
 const _ = require('lodash')
-const { distanceInWordsToNow } = require('date-fns')
+const { differenceInCalendarDays } = require('date-fns')
 
 class PullRequests {
   constructor(prs, { label, reviewer, assignee }) {
@@ -66,10 +66,51 @@ class PullRequests {
     }
   }
 
-  formatPullRequest(pr, index) {
-    return `${index + 1}. \`${pr.title}\` by \`${
+  formatPullRequest(pr) {
+    const { reviews } = pr
+    let reviewText = ''
+
+    if (reviews) {
+      const { edges } = reviews
+      if (edges) {
+        const reviewTexts = {
+          COMMENTED: 0,
+          APPROVED: 0,
+          CHANGES_REQUESTED: 0,
+        }
+
+        edges.forEach(edge => {
+          reviewTexts[edge.node.state]++
+        })
+
+        if (reviewTexts.CHANGES_REQUESTED > 0) {
+          reviewText += reviewTexts.CHANGES_REQUESTED + ' change request'
+          reviewText += reviewTexts.CHANGES_REQUESTED > 1 ? 's' : ''
+        }
+
+        if (reviewTexts.APPROVED > 0) {
+          reviewText += reviewText.length > 0 ? ', ' : ''
+          reviewText += reviewTexts.APPROVED + ' approval'
+          reviewText += reviewTexts.APPROVED > 1 ? 's' : ''
+        }
+
+        if (reviewTexts.COMMENTED > 0) {
+          reviewText += reviewText.length > 0 ? ', ' : ''
+          reviewText += reviewTexts.COMMENTED + ' comment'
+          reviewText += reviewTexts.COMMENTED > 1 ? 's' : ''
+        }
+      }
+    }
+
+    if (reviewText) {
+      reviewText = 'with ' + reviewText
+    } else {
+      reviewText = 'with no review'
+    }
+
+    return `${this.distanceText(pr)}: \`${pr.title}\` by \`${
       pr.author.login
-    }\` ${this.distanceText(pr)}`
+    }\` ${reviewText}`
   }
 
   reviewersText(reviewRequests) {
@@ -83,7 +124,13 @@ class PullRequests {
   }
 
   distanceText(pr) {
-    return `${distanceInWordsToNow(new Date(pr.createdAt))} ago`
+    // let text = `${distanceInWordsToNow(new Date(pr.createdAt))}`
+    let days = differenceInCalendarDays(new Date(), new Date(pr.createdAt))
+    let text = days + ' days'
+    if (days > process.env.REVIEW_SLA || 7) {
+      text = '*' + text + '*'
+    }
+    return text
   }
 
   convertToSlackMessages() {

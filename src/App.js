@@ -38,7 +38,7 @@ class App {
         ).convertToSlackMessages()
 
         if (messages.length > 0) {
-          convo.say(`:memo: ${messages.length} unshipped Pull Requests:`)
+          convo.say(`:ship: ${messages.length} unshipped Pull Requests:`)
           _.each(messages, pr => convo.say(pr))
 
           convo.say(
