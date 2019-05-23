@@ -126,7 +126,7 @@ class PullRequests {
   distanceText(pr) {
     // let text = `${distanceInWordsToNow(new Date(pr.createdAt))}`
     let days = differenceInCalendarDays(new Date(), new Date(pr.createdAt))
-    return '*' + days + ' day' + (days > 1 ? 's' : '') + '*'
+    return '*' + days + ' day' + (days === 1 ? '' : 's') + '*'
   }
 
   convertToSlackMessages() {
