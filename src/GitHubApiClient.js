@@ -7,7 +7,7 @@ class GitHubApiClient {
   constructor() {
     this.client = axios.create({
       baseURL: 'https://api.github.com/',
-      timeout: 5000,
+      timeout: process.env.TIMEOUT || 5000,
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',

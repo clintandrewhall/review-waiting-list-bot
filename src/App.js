@@ -29,29 +29,39 @@ class App {
       .join('+')
 
     const client = new GitHubApiClient()
+    client
+      .getAllPullRequests(conditions)
+      .then(prs => {
+        bot.startConversation(message, (err, convo) => {
+          const messages = new PullRequests(
+            prs,
+            conditions
+          ).convertToSlackMessages()
 
-    client.getAllPullRequests(conditions).then(prs => {
-      bot.startConversation(message, (err, convo) => {
-        const messages = new PullRequests(
-          prs,
-          conditions
-        ).convertToSlackMessages()
+          if (messages.length > 0) {
+            convo.say(`:ship: ${messages.length} unshipped Pull Requests:`)
+            _.each(messages, pr => convo.say(pr))
 
-        if (messages.length > 0) {
-          convo.say(`:ship: ${messages.length} unshipped Pull Requests:`)
-          _.each(messages, pr => convo.say(pr))
+            convo.say(
+              'View the list: https://github.com/pulls?utf8=✓&q=is:pr+is:open+' +
+                filters
+            )
+          } else {
+            convo.say(`:memo: Nothing to ship! 🍾`)
+          }
 
-          convo.say(
-            'View the list: https://github.com/pulls?utf8=✓&q=is:pr+is:open+' +
-              filters
-          )
-        } else {
-          convo.say(`:memo: Nothing to ship! 🍾`)
-        }
-
-        convo.next()
+          convo.next()
+        })
       })
-    })
+      .catch(reason => {
+        bot.startConversation(message, (err, convo) => {
+          convo.say(
+            `I'm really sorry, but I screwed up somewhere. Ask @clintandrewhall to check on me. (${
+              reason.code
+            })`
+          )
+        })
+      })
   }
 
   static beforeValidate() {
