@@ -8,15 +8,7 @@ class Condition {
   }
 
   static get ACCEPTABLE_CONDITIONS() {
-    return [
-      'author',
-      'user',
-      'repo',
-      'label',
-      'reviewer',
-      'assignee',
-      'status',
-    ]
+    return ['author', 'user', 'repo', 'label', 'reviewer', 'assignee']
   }
 
   toQuery() {

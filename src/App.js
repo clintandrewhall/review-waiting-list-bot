@@ -17,6 +17,12 @@ class App {
       ['direct_message', 'direct_mention', 'mention'],
       this.ls
     )
+
+    controller.hears(
+      'ls (.+)',
+      ['direct_message', 'direct_mention', 'mention'],
+      this.ls
+    )
   }
 
   static ls(bot, message) {
@@ -47,7 +53,7 @@ class App {
                 filters
             )
           } else {
-            convo.say(`:memo: Nothing to ship! 🍾`)
+            convo.say(`:ship: Nothing to ship! 🍾`)
           }
 
           convo.next()
@@ -58,7 +64,7 @@ class App {
           convo.say(
             `I'm really sorry, but I screwed up somewhere. Ask @clintandrewhall to check on me. (${
               reason.code
-            })`
+            }, ${err.message})`
           )
         })
       })
