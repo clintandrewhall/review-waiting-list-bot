@@ -20,7 +20,7 @@ class Parser {
   extract(argName) {
     const keyName = argName === 'user' ? 'owner' : argName // TODO this is Workaround to convert
     const regexp = new RegExp(
-      `-?${keyName}:([A-z0-9-_/,:]+|(["'“”]{1}[A-z0-9-_/, ]+["'“”]{1},?)+)`
+      `-?${keyName}:([^"'“”\\s,]+|(["'“”]{1}[^"'“”]+["'“”]{1},?)+)`
     ) // TODO better regex
     const matched = this.args.match(regexp)
     return new Condition(argName, ...this.convertToConditionArgs(matched))

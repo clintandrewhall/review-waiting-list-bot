@@ -24,3 +24,16 @@ test('.parse() works even when arguments have quotations', () => {
     assignee: new Condition('assignee', ['nyan'], true),
   })
 })
+
+test('.parse() works even when arguments have quotations with colons', () => {
+  const parser = new Parser(`label:"Team:My Cool Team","Team:Another Cool Team" repo:elastic/kibana`)
+  expect(parser.parse()).toEqual({
+    author: new Condition('author', [], true),
+    assignee: new Condition('assignee', [], true),
+    reviewer: new Condition('reviewer', [], true),
+    user: new Condition('user', [], true),
+
+    label: new Condition('label', ['Team:My Cool Team', 'Team:Another Cool Team'], true),
+    repo: new Condition('repo', ['elastic/kibana'], true),
+  })
+})
