@@ -37,3 +37,16 @@ test('.parse() works even when arguments have quotations with colons', () => {
     repo: new Condition('repo', ['elastic/kibana'], true),
   })
 })
+
+test('.parse() with multiple values per label', () => {
+  const parser = new Parser(`label:Team:Canvas,review repo:elastic/kibana`)
+  expect(parser.parse()).toEqual({
+    author: new Condition('author', [], true),
+    assignee: new Condition('assignee', [], true),
+    reviewer: new Condition('reviewer', [], true),
+    user: new Condition('user', [], true),
+
+    label: new Condition('label', ['Team:Canvas', 'review' ], true),
+    repo: new Condition('repo', ['elastic/kibana'], true),
+  })
+})
