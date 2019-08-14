@@ -195,7 +195,7 @@ describe('.formatPullRequest', () => {
       },
     }
 
-    advanceBy(5 * 60 * 60 * 1000)
+    advanceBy(24 * 60 * 60 * 1000)
 
     expect(pullRequest.formatPullRequest(pr, 0)).toEqual(
       '*1 day*: `Add some tests` by `ohbarye` with no review'
