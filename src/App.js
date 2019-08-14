@@ -63,8 +63,8 @@ class App {
         bot.startConversation(message, (err, convo) => {
           convo.say(
             `I'm really sorry, but I screwed up somewhere. Ask @clintandrewhall to check on me. (${
-              reason.code
-            }, ${err.message})`
+              reason && reason.code
+            }, ${err && err.message})`
           )
         })
       })
