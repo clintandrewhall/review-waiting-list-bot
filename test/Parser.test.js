@@ -50,3 +50,27 @@ test('.parse() with multiple values per label', () => {
     repo: new Condition('repo', ['elastic/kibana'], true),
   })
 })
+
+test('.parse() with Slack reminders that end with "." correctly', () => {
+  const parser = new Parser(`label:Team:Canvas,review repo:elastic/kibana..`)
+  expect(parser.parse()).toEqual({
+    author: new Condition('author', [], true),
+    assignee: new Condition('assignee', [], true),
+    reviewer: new Condition('reviewer', [], true),
+    user: new Condition('user', [], true),
+
+    label: new Condition('label', ['Team:Canvas', 'review' ], true),
+    repo: new Condition('repo', ['elastic/kibana'], true),
+  })
+
+  const parserWithQuotes = new Parser(`label:"Team:Canvas 1","review" repo:"name must have a dot.".`)
+  expect(parserWithQuotes.parse()).toEqual({
+    author: new Condition('author', [], true),
+    assignee: new Condition('assignee', [], true),
+    reviewer: new Condition('reviewer', [], true),
+    user: new Condition('user', [], true),
+
+    label: new Condition('label', ['Team:Canvas 1', 'review' ], true),
+    repo: new Condition('repo', ['name must have a dot.'], true),
+  })
+})
