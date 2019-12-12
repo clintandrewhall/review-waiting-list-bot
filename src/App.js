@@ -31,8 +31,7 @@ class App {
     const filters = Object.values(conditions)
       .map(filter => filter.toQuery())
       .filter(filter => !!filter)
-      .map(filter => filter.replace(/ /g, '+'))
-      .join('+')
+      .join(' ')
 
     const client = new GitHubApiClient()
     client
@@ -48,10 +47,10 @@ class App {
             convo.say(`:ship: ${messages.length} unshipped Pull Requests:`)
             _.each(messages, pr => convo.say(pr))
 
-            convo.say(
-              'View the list: https://github.com/pulls?utf8=✓&q=is:pr+is:open+' +
-                filters
-            )
+            const listUrl = `https://github.com/pulls?utf8=✓&q=${encodeURIComponent(
+              'is:pr is:open ' + filters
+            )}`
+            convo.say('View the list: ' + listUrl)
           } else {
             convo.say(`:ship: Nothing to ship! 🍾`)
           }
