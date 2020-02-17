@@ -4,6 +4,7 @@ const SlackBot = require('./SlackBot')
 const GitHubApiClient = require('./GitHubApiClient')
 const PullRequests = require('./PullRequests')
 const Parser = require('./Parser')
+const utils = require('./utils')
 const _ = require('lodash')
 
 class App {
@@ -28,10 +29,7 @@ class App {
   static ls(bot, message) {
     const conditions = new Parser(message.match[1]).parse()
 
-    const filters = Object.values(conditions)
-      .map(filter => filter.toQuery())
-      .filter(filter => !!filter)
-      .join(' ')
+    const filters = utils.getFiltersFromConditions(conditions)
 
     const client = new GitHubApiClient()
     client
@@ -47,9 +45,7 @@ class App {
             convo.say(`:ship: ${messages.length} unshipped Pull Requests:`)
             _.each(messages, pr => convo.say(pr))
 
-            const listUrl = `https://github.com/pulls?utf8=✓&q=${encodeURIComponent(
-              'is:pr is:open ' + filters
-            )}`
+            const listUrl = utils.generateGitHubListURL(filters)
             convo.say('View the list: ' + listUrl)
           } else {
             convo.say(`:ship: Nothing to ship! 🍾`)
