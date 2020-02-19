@@ -1,8 +1,12 @@
 'use strict'
 
+/**
+ * Prepare a filter value for querying Github
+ * @param {string} string String representation of Github filter
+ */
 const processValueForURI = string =>
   string.indexOf(' ') > -1
-    ? `${encodeURIComponent('"' + string + '"')}`
+    ? `"${string}"`
     : string
 
 class Condition {
