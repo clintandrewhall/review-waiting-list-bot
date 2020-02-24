@@ -3,7 +3,7 @@ const Condition = require('../src/Condition')
 
 test('.parse() works with simple arguments', () => {
   const parser = new Parser(
-    'author:cat owner:host repo:pethouse label:meow assignee:nyan -reviewer:dog'
+    'author:cat owner:host repo:pethouse label:meow assignee:nyan -reviewer:dog team-review-requested:elephant'
   )
   expect(parser.parse()).toEqual({
     author: new Condition('author', ['cat'], true),
@@ -12,6 +12,7 @@ test('.parse() works with simple arguments', () => {
     label: new Condition('label', ['meow'], true),
     reviewer: new Condition('reviewer', ['dog'], false),
     assignee: new Condition('assignee', ['nyan'], true),
+    'team-review-requested': new Condition('team-review-requested', ['elephant'], true),
   })
 })
 
@@ -26,6 +27,7 @@ test('.parse() works even when arguments have quotations', () => {
     label: new Condition('label', ['good first', 'bug'], true),
     reviewer: new Condition('reviewer', ['dog'], false),
     assignee: new Condition('assignee', ['nyan'], true),
+    'team-review-requested': new Condition('team-review-requested', [], true),
   })
 })
 
@@ -38,6 +40,7 @@ test('.parse() works even when arguments have quotations with colons', () => {
     assignee: new Condition('assignee', [], true),
     reviewer: new Condition('reviewer', [], true),
     user: new Condition('user', [], true),
+    'team-review-requested': new Condition('team-review-requested', [], true),
 
     label: new Condition(
       'label',
@@ -55,6 +58,7 @@ test('.parse() with multiple values per label', () => {
     assignee: new Condition('assignee', [], true),
     reviewer: new Condition('reviewer', [], true),
     user: new Condition('user', [], true),
+    'team-review-requested': new Condition('team-review-requested', [], true),
 
     label: new Condition('label', ['Team:Canvas', 'review'], true),
     repo: new Condition('repo', ['elastic/kibana'], true),
@@ -68,6 +72,7 @@ test('.parse() works when the statement ends with a period', () => {
     assignee: new Condition('assignee', [], true),
     reviewer: new Condition('reviewer', [], true),
     user: new Condition('user', [], true),
+    'team-review-requested': new Condition('team-review-requested', [], true),
 
     label: new Condition('label', ['Team:Canvas', 'review'], true),
     repo: new Condition('repo', ['elastic/kibana'], true),

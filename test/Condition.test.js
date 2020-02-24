@@ -28,4 +28,9 @@ describe('.toQuery', () => {
     const condition2 = new Condition('label', ['v5.2.0', 'Feature:Logstash Pipelines', '[zube]: Backlog'], true)
     expect(condition2.toQuery()).toEqual('label:v5.2.0 label:"Feature:Logstash Pipelines" label:"[zube]: Backlog"')
   })
+
+  test('works with teams', () => {
+    const condition = new Condition('team-review-requested', ['elastic/logs-metrics-ui'], true)
+    expect(condition.toQuery()).toEqual('team-review-requested:elastic/logs-metrics-ui')
+  })
 })
